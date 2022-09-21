@@ -4,24 +4,42 @@ def findDerivativeDescriminant(a , b, c):
 def findFuctionValue(a, b, c, d, x):
     return a*x*x*x + b*x*x + c*x + d
 
+  def findRoot(a, b, c, d, leftValue, rightValue, epsilon):
+    btw = (leftValue + rightValue) / 2
+    while abs(findFunctionValue(a, b, c, d, btw)) > epsilon:
+          if findFunctionValue(a, b, c, d, btw) < -epsilon:
+             rightValue = btw
+          elif findFunctionValue(a, b, c, d, btw) > epsilon:
+             leftValue = btw
+          btw = (leftValue + rightValue) / 2
+    return btw
+  
 def findRootInPostiveSide(a, b, c, d, delta, epsilon, leftValue):
-    #here i am finding point where function intersects with OX and making inerval to find this point
-    while findFuctionValue(a, b, c, d, leftValue + delta) < 0:
+     #here i am finding point where function intersects with OX and making inerval to find this point
+    while findFunctionValue(a, b, c, d, leftValue + delta) < 0:
           leftValue += delta
     rightValue = leftValue + delta
+    root = findRoot(a, b, c, d, leftValue, rightValue, epsilon)
+    return root          
     
-def findingOneRoot(a, b, c, d, epsilon, delta):
-    if findFuctionValue(a, b, c, d, 0) == epsilon:
-       return findFuctionValue(a, b, c, d, 0)
-
-    elif findFuctionValue(a, b, c, d, 0) > 0:
-       return findRootInPostiveSide(a, b, c, d, delta, epsilon, 0)    
-
-    return 
+def findingOneRoot(a, b, c, d, epsilon, delta, derivativeDescriminant):
+     root = 0
+    if derivativeDescriminant != 0:
+       if findFunctionValue(a, b, c, d, 0) == 0:
+          root = findFunctionValue(a, b, c, d, 0)
+       elif findFunctionValue(a, b, c, d, 0) < 0:
+          root = findRootInPostiveSide(a, b, c, d, delta, epsilon, 0)    
+       print('Однократный корень: ', root)
+    elif derivativeDescriminant == 0: 
+         if findFunctionValue(a, b, c, d, 0) == 0:
+            root = findFunctionValue(a, b, c, d, 0)
+         elif findFunctionValue(a, b, c, d, 0) < 0:
+            root = findRootInPostiveSide(a, b, c, d, delta, epsilon, 0)
+         print('Двукратный корень: ', root)     
   
 
 def findingTwoOrThreeRoots(a, b, c, d, epsilon, delta):
-
+    
   return 
   
 def main():
@@ -40,5 +58,6 @@ def main():
     derivativeDescriminant = findDerivativeDescriminant(a, b, c)   
 
     if derivativeDescriminant <= 0:
-       findingOneRoot(a, b, c, d, epsilon, delta)
-
+       findingOneRoot(a, b, c, d, epsilon, delta, derivativeDescriminant)
+    elif derivativeDescriminant > 0:
+       findingTwoOrThreeRoots(a, b, c, d, epsilon, delta)
