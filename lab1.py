@@ -21,26 +21,41 @@ def findRootInPostiveSide(a, b, c, d, delta, epsilon, leftValue):
     rightValue = leftValue + delta
     root = findRoot(a, b, c, d, leftValue, rightValue, epsilon)
     return root          
-    
+
+def findRootInNegativeSide(a, b, c, d, delta, epsilon, rightValue):
+    while findFunctionValue(a, b, c, d, rightValue - delta) > 0:
+          rightValue -= delta
+    leftValue = rightValue - delta    
+
+    root = findRoot(a, b, c, d, leftValue, rightValue, epsilon)  
+
+    return root  
+  
 def findingOneRoot(a, b, c, d, epsilon, delta, derivativeDescriminant):
      root = 0
     if derivativeDescriminant != 0:
        if findFunctionValue(a, b, c, d, 0) == 0:
-          root = findFunctionValue(a, b, c, d, 0)
+            root = findFunctionValue(a, b, c, d, 0)
        elif findFunctionValue(a, b, c, d, 0) < 0:
-          root = findRootInPostiveSide(a, b, c, d, delta, epsilon, 0)    
+            root = findRootInPostiveSide(a, b, c, d, delta, epsilon, 0)
+       elif findFunctionValue(a, b, c, d, 0) > 0:
+            root = findRootInNegativeSide(a, b, c, d, delta, epsilon, 0)       
        print('Однократный корень: ', root)
     elif derivativeDescriminant == 0: 
          if findFunctionValue(a, b, c, d, 0) == 0:
             root = findFunctionValue(a, b, c, d, 0)
          elif findFunctionValue(a, b, c, d, 0) < 0:
             root = findRootInPostiveSide(a, b, c, d, delta, epsilon, 0)
-         print('Двукратный корень: ', root)     
+         elif findFunctionValue(a, b, c, d, 0) < 0:
+            root = findRootInNegativeSide(a, b, c, d, delta, epsilon, 0)   
+         print('Трёхкратный корень: ', root)     
   
 
-def findingTwoOrThreeRoots(a, b, c, d, epsilon, delta):
-    
-  return 
+def findingDerivativeRoots(a, b, descriminant):
+    root1 = (-2 * b - descriminant ** 0.5) / (6 * a)
+    root2 = (-2 * b + descriminant ** 0.5) / (6 * a)
+
+    return root1, root2
   
 def main():
     try:
