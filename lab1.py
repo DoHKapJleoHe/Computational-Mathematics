@@ -4,15 +4,25 @@ def findDerivativeDescriminant(a , b, c):
 def findFuctionValue(a, b, c, d, x):
     return a*x*x*x + b*x*x + c*x + d
 
-  def findRoot(a, b, c, d, leftValue, rightValue, epsilon):
-    btw = (leftValue + rightValue) / 2
-    while abs(findFunctionValue(a, b, c, d, btw)) > epsilon:
-          if findFunctionValue(a, b, c, d, btw) < -epsilon:
+ def findRoot(a, b, c, d, leftValue, rightValue, epsilon):
+     if abs(findFunctionValue(a, b, c, d, leftValue)) < 0:
+             return leftValue
+     if abs(findFunctionValue(a, b, c, d, rightValue)) < 0:
+               return rightValue 
+
+     btw = (leftValue + rightValue) / 2
+     while abs(findFunctionValue(a, b, c, d, btw)) > epsilon:
+          if abs(findFunctionValue(a, b, c, d, leftValue)) < 0:
+             return leftValue
+          elif abs(findFunctionValue(a, b, c, d, rightValue)) < 0:
+               return rightValue   
+          elif findFunctionValue(a, b, c, d, btw) < 0:
              rightValue = btw
-          elif findFunctionValue(a, b, c, d, btw) > epsilon:
+          elif findFunctionValue(a, b, c, d, btw) > 0:
              leftValue = btw
           btw = (leftValue + rightValue) / 2
-    return btw
+
+     return btw
   
 def findRootInPostiveSide(a, b, c, d, delta, epsilon, leftValue):
      #here i am finding point where function intersects with OX and making inerval to find this point
@@ -32,12 +42,12 @@ def findRootInNegativeSide(a, b, c, d, delta, epsilon, rightValue):
     return root  
   
 def findingOneRoot(a, b, c, d, epsilon, delta, derivativeDescriminant):
-     root = 0
-    if derivativeDescriminant != 0:
+    root = 0
+    if derivativeDescriminant < 0:
        if findFunctionValue(a, b, c, d, 0) == 0:
             root = findFunctionValue(a, b, c, d, 0)
        elif findFunctionValue(a, b, c, d, 0) < 0:
-            root = findRootInPostiveSide(a, b, c, d, delta, epsilon, 0)
+            root = findRootInPositiveSide(a, b, c, d, delta, epsilon, 0)
        elif findFunctionValue(a, b, c, d, 0) > 0:
             root = findRootInNegativeSide(a, b, c, d, delta, epsilon, 0)       
        print('Однократный корень: ', root)
@@ -45,10 +55,10 @@ def findingOneRoot(a, b, c, d, epsilon, delta, derivativeDescriminant):
          if findFunctionValue(a, b, c, d, 0) == 0:
             root = findFunctionValue(a, b, c, d, 0)
          elif findFunctionValue(a, b, c, d, 0) < 0:
-            root = findRootInPostiveSide(a, b, c, d, delta, epsilon, 0)
-         elif findFunctionValue(a, b, c, d, 0) < 0:
+            root = findRootInPositiveSide(a, b, c, d, delta, epsilon, 0)
+         elif findFunctionValue(a, b, c, d, 0) > 0:
             root = findRootInNegativeSide(a, b, c, d, delta, epsilon, 0)   
-         print('Трёхкратный корень: ', root)     
+         print('Трёхкратный корень: ', root)      
   
 
 def findingDerivativeRoots(a, b, descriminant):
