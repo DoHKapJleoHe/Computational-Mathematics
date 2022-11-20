@@ -1,88 +1,91 @@
-def findDerivativeDescriminant(a , b, c):
-  return 4*b*b - 12*a*c
+import math
+import numpy as np
+import matplotlib.pyplot as plt
 
-def findFuctionValue(a, b, c, d, x):
-    return a*x*x*x + b*x*x + c*x + d
+epsilon = pow(10, -12)
+right = 0
+left = 1
 
- def findRoot(a, b, c, d, leftValue, rightValue, epsilon):
-     if abs(findFunctionValue(a, b, c, d, leftValue)) < 0:
-             return leftValue
-     if abs(findFunctionValue(a, b, c, d, rightValue)) < 0:
-               return rightValue 
-
-     btw = (leftValue + rightValue) / 2
-     while abs(findFunctionValue(a, b, c, d, btw)) > epsilon:
-          if abs(findFunctionValue(a, b, c, d, leftValue)) < 0:
-             return leftValue
-          elif abs(findFunctionValue(a, b, c, d, rightValue)) < 0:
-               return rightValue   
-          elif findFunctionValue(a, b, c, d, btw) < 0:
-             rightValue = btw
-          elif findFunctionValue(a, b, c, d, btw) > 0:
-             leftValue = btw
-          btw = (leftValue + rightValue) / 2
-
-     return btw
+def f(x, a, b, c):
+    return x ** 3 + a * x ** 2 + b * x + c 
   
-def findRootInPostiveSide(a, b, c, d, delta, epsilon, leftValue):
-     #here i am finding point where function intersects with OX and making inerval to find this point
-    while findFunctionValue(a, b, c, d, leftValue + delta) < 0:
-          leftValue += delta
-    rightValue = leftValue + delta
-    root = findRoot(a, b, c, d, leftValue, rightValue, epsilon)
-    return root          
+def sign(x):
+    return (1, -1)[x < 0]
 
-def findRootInNegativeSide(a, b, c, d, delta, epsilon, rightValue):
-    while findFunctionValue(a, b, c, d, rightValue - delta) > 0:
-          rightValue -= delta
-    leftValue = rightValue - delta    
+def bisectional_root_search(a, b, c1, c2, c3):
+    if sign(f(a, c1, c2, c3)) == sign(f(b, c1, c2, c3)):
+        raise Exception("a and b do not bound a root")
 
-    root = findRoot(a, b, c, d, leftValue, rightValue, epsilon)  
+    m = (a + b) / 2
 
-    return root  
-  
-def findingOneRoot(a, b, c, d, epsilon, delta, derivativeDescriminant):
-    root = 0
-    if derivativeDescriminant < 0:
-       if findFunctionValue(a, b, c, d, 0) == 0:
-            root = findFunctionValue(a, b, c, d, 0)
-       elif findFunctionValue(a, b, c, d, 0) < 0:
-            root = findRootInPositiveSide(a, b, c, d, delta, epsilon, 0)
-       elif findFunctionValue(a, b, c, d, 0) > 0:
-            root = findRootInNegativeSide(a, b, c, d, delta, epsilon, 0)       
-       print('Однократный корень: ', root)
-    elif derivativeDescriminant == 0: 
-         if findFunctionValue(a, b, c, d, 0) == 0:
-            root = findFunctionValue(a, b, c, d, 0)
-         elif findFunctionValue(a, b, c, d, 0) < 0:
-            root = findRootInPositiveSide(a, b, c, d, delta, epsilon, 0)
-         elif findFunctionValue(a, b, c, d, 0) > 0:
-            root = findRootInNegativeSide(a, b, c, d, delta, epsilon, 0)   
-         print('Трёхкратный корень: ', root)      
-  
+    if abs(f(m, c1, c2, c3)) <= epsilon:
+        return m
+    elif abs(a - b) < epsilon:
+        return a
+    elif sign(f(m, c1, c2, c3)) != sign(f(b, c1, c2, c3)):
+        return bisectional_root_search(m, b, c1, c2, c3)
+    elif sign(f(m, c1, c2, c3)) != sign(f(a, c1, c2, c3)):
+        return bisectional_root_search(a, m, c1, c2, c3)
+    
+def discriminant_derivative(a, b):
+    return 4 * a ** 2 - 12 * b
+ 
+def find_interval(left_bound, right_bound, direction, a, b, c):
+    if direction == right:
+        step = 1
+    else:
+        step = -1
 
-def findingDerivativeRoots(a, b, descriminant):
-    root1 = (-2 * b - descriminant ** 0.5) / (6 * a)
-    root2 = (-2 * b + descriminant ** 0.5) / (6 * a)
+    while sign(f(left_bound, a, b, c)) == sign(f(right_bound, a, b, c)):
+        left_bound += step
+        right_bound += step
+    if f(left_bound, a, b, c) == 0:
+        return left_bound
+    elif f(right_bound, a, b, c) == 0:
+        return right_bound
+    else:
+        return bisectional_root_search(left_bound, right_bound, a, b, c)
 
-    return root1, root2
-  
-def main():
-    try:
-        #reading coeficients for ax^3 + bx^2 +cx + d
-        a = float(input('a = '))
-        b = float(input('b = '))
-        c = float(input('c = '))
-        d = float(input('d = '))
-        epsilon = float(input('epsilon = '))
-        delta = float(input('delta = '))
-    except:
-        print('Bad input!')
+def solve_equation(a, b, c):
+    if discriminant_derivative(a, b) <= 0:
+        if f(0, a, b, c) < -epsilon:
+            print("equation has one root: x = ", find_interval(0, 1, right, a, b, c))
+        elif f(0, a, b, c) > epsilon:
+            print("equation has one root: x = ", find_interval(-1, 0, left, a, b, c))
+        else:
+            print("equation has one root: x = 0")
+    else:
+        x_1 = (-2 * a - math.sqrt(discriminant_derivative(a, b))) / 6
+        x_2 = (-2 * a + math.sqrt(discriminant_derivative(a, b))) / 6
 
-    #3ax^2 + 2bx + c
-    derivativeDescriminant = findDerivativeDescriminant(a, b, c)   
+        if f(x_1, a, b, c) < -epsilon:
+            print("equation has one root: x_1 = ", find_interval(x_2, x_2 + 1, right, a, b, c))
 
-    if derivativeDescriminant <= 0:
-       findingOneRoot(a, b, c, d, epsilon, delta, derivativeDescriminant)
-    elif derivativeDescriminant > 0:
-       findingTwoOrThreeRoots(a, b, c, d, epsilon, delta)
+        elif f(x_2, a, b, c) > epsilon and not f(x_2, a, b, c):
+            print("equation has one root: x_1 = ", find_interval(x_1 - 1, x_1, left, a, b, c))
+
+        elif f(x_1, a, b, c) > epsilon and f(x_2, a, b, c):
+            print("equation has three roots: x_1 = ", find_interval(x_1 - 1, x_1, left, a, b, c))
+            print("x_2 = ", find_interval(x_2, x_2 + 1, right, a, b, c))
+            print("x_3 = ", bisectional_root_search(x_1, x_2, a, b, c))
+
+        elif abs(f(x_1, a, b, c)) < epsilon and f(x_2, a, b, c) < -epsilon:
+            print("equation has two roots: x_1 = ", x_1)
+            print("x_2 = ", find_interval(x_2, x_2 + 1, right, a, b, c))
+
+        elif abs(f(x_2, a, b, c)) < epsilon < f(x_1, a, b, c):
+            print("equation has two roots: x_1 = ", x_2)
+            print("x_2 = ", find_interval(x_1 - 1, x_1, left, a, b, c))
+
+        elif abs(f(x_1, a, b, c)) < epsilon and abs(f(x_2, a, b, c)) < epsilon:
+            print("equation has three roots x_1 = x_2 = x_3 = ", x_1)
+        exit()
+        
+a = float(input("a = "))
+b = float(input("b = "))
+c = float(input("c = "))
+solve_equation(a, b, c)
+
+x = np.arange(-10, 10.01, 0.01)
+plt.plot(x, x**3 + a*x**2 + b*x + c)
+plt.show()        
